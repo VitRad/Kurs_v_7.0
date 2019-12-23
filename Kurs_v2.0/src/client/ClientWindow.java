@@ -1,52 +1,22 @@
 package client;
 
-import com.sun.xml.internal.bind.v2.TODO;
-
-import javax.accessibility.AccessibleContext;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.net.Socket;
-import java.util.Scanner;
+import java.io.IOException;
+import static client.ClientUtils.*;
 
 public class ClientWindow extends JFrame {
-    // адрес сервера
-    private static final String SERVER_HOST = "localhost";
-    // порт
-    private static final int SERVER_PORT = 3443;
-    // клиентский сокет
-    private Socket clientSocket;
-    // входящее сообщение
-    private Scanner inMessage;
-    // исходящее сообщение
-    private PrintWriter outMessage;
-    // следующие поля отвечают за элементы формы
-    private JTextField jtfMessage;
-    private JTextField jtfName;
-    private JTextArea jtaTextAreaMessage;
-    // имя клиента
+    public static JTextField jtfName;
+    public static JTextField jtfMessage;
     public String clientName = "";
-    // получаем имя клиента
-    public String getClientName() {
-        return this.clientName;
-    }
 
-    // конструктор
-    public ClientWindow() {
-        try {
-            // подключаемся к серверу
-            clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
-            inMessage = new Scanner(clientSocket.getInputStream());
-            outMessage = new PrintWriter(clientSocket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void windowGen() {
         // Задаём настройки элементов на форме
-        setBounds(600, 300, 600, 500);
+        setBounds(400, 200, 600, 500);
         setTitle("Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jtaTextAreaMessage = new JTextArea();
+        JTextArea jtaTextAreaMessage = new JTextArea();
         jtaTextAreaMessage.setEditable(false);
         jtaTextAreaMessage.setLineWrap(true);
         JScrollPane jsp = new JScrollPane(jtaTextAreaMessage);
@@ -62,6 +32,7 @@ public class ClientWindow extends JFrame {
         bottomPanel.add(jtfMessage, BorderLayout.CENTER);
         jtfName = new JTextField("Введите ваше имя: ");
         bottomPanel.add(jtfName, BorderLayout.WEST);
+
         //Обработчик отправки сообщения, нажатием ENTER
         jtfMessage.addKeyListener(new KeyListener() {
             @Override
@@ -70,10 +41,9 @@ public class ClientWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
             }
-
             @Override
             public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER ){
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
                         clientName = jtfName.getText();
                         sendMsg();
@@ -81,7 +51,8 @@ public class ClientWindow extends JFrame {
                         jtfMessage.grabFocus();
                     }
                 }
-            }});
+            }
+        });
         // обработчик события нажатия кнопки отправки сообщения
         jbSendMessage.addActionListener(new ActionListener() {
             @Override
@@ -134,7 +105,9 @@ public class ClientWindow extends JFrame {
                 } catch (Exception e) {
                 }
             }
-        }).start();
+        }).
+                start();
+
         // добавляем обработчик события закрытия окна клиентского приложения
         addWindowListener(new WindowAdapter() {
             @Override
@@ -148,7 +121,7 @@ public class ClientWindow extends JFrame {
                         outMessage.println("Участник вышел из чата, так и не представившись!");
                     }
                     // отправляем служебное сообщение, которое является признаком того, что клиент вышел из чата
-                    outMessage.println("##session##end##");
+                    outMessage.println("close");
                     outMessage.flush();
                     outMessage.close();
                     inMessage.close();
@@ -158,12 +131,12 @@ public class ClientWindow extends JFrame {
                 }
             }
         });
+
         // отображаем форму
         setVisible(true);
     }
 
-    // отправка сообщения
-    public void sendMsg() {
+    public static void sendMsg() {
         // формируем сообщение для отправки на сервер
         String messageStr = jtfName.getText() + ": " + jtfMessage.getText();
         // отправляем сообщение
@@ -172,4 +145,3 @@ public class ClientWindow extends JFrame {
         jtfMessage.setText("");
     }
 }
-

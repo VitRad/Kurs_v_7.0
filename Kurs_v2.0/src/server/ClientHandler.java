@@ -1,13 +1,8 @@
 package server;
 
-import client.ClientStarter;
-import client.ClientWindow;
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
@@ -25,8 +20,7 @@ public class ClientHandler implements Runnable {
 		// количество клиента в чате, статичное поле
     private static int clients_count = 0;
 
-		// конструктор, который принимает клиентский сокет и сервер
-    public ClientHandler(Socket socket, Server server) {
+    public void clientSession(Socket socket, Server server) {
         try {
             clients_count++;
             this.server = server;
@@ -37,7 +31,8 @@ public class ClientHandler implements Runnable {
             ex.printStackTrace();
         }
     }
-		// Переопределяем метод run(), который вызывается когда
+
+    // Переопределяем метод run(), который вызывается когда
 		// мы вызываем new Thread(client).start();
     @Override
     public void run() {
@@ -53,9 +48,9 @@ public class ClientHandler implements Runnable {
                 // Если от клиента пришло сообщение
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
-										// если клиент отправляет данное сообщение, то цикл прерывается и
-										// клиент выходит из чата
-                    if (clientMessage.equalsIgnoreCase("##session##end##")) {
+							// если клиент отправляет данное сообщение, то цикл прерывается и
+							// клиент выходит из чата
+                    if (clientMessage.equalsIgnoreCase("close")) {
                         break;
                     }
                     //Сохраняем сообщение в общую историю сервера
@@ -73,15 +68,8 @@ public class ClientHandler implements Runnable {
                     }
                     System.out.println("-----------------------");
                 }
-
-//                ClientWindow.getClientName();
-//								// останавливаем выполнение потока на 100 мс
-//                Thread.sleep(100);
             }
         }
-//        catch (InterruptedException ex) {
-//            ex.printStackTrace();
-//        }
         finally {
             this.close();
         }
