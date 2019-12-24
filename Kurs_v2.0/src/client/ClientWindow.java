@@ -45,7 +45,6 @@ public class ClientWindow extends JFrame {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
-                        clientName = jtfName.getText();
                         sendMsg();
                         // фокус на текстовое поле с сообщением
                         jtfMessage.grabFocus();
@@ -59,7 +58,6 @@ public class ClientWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // если имя клиента, и сообщение непустые, то отправляем сообщение
                 if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
-                    clientName = jtfName.getText();
                     sendMsg();
                     // фокус на текстовое поле с сообщением
                     jtfMessage.grabFocus();
@@ -137,6 +135,8 @@ public class ClientWindow extends JFrame {
     }
 
     public static void sendMsg() {
+        //Определим, какое собщение отправляем: личное, или всем пользователям
+
         // формируем сообщение для отправки на сервер
         String messageStr = jtfName.getText() + ": " + jtfMessage.getText();
         // отправляем сообщение

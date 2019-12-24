@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -67,6 +68,14 @@ public class ClientHandler implements Runnable {
                         System.out.println("history: " + server.history.get(size-2));
                     }
                     System.out.println("-----------------------");
+                }
+                //Добавим вывод Истории сообщений в консоль сервера
+                Scanner scanner = new Scanner(new InputStreamReader(System.in));
+                while (scanner.hasNext()) {
+                    String str = scanner.nextLine();
+                    if (str.equalsIgnoreCase("history")) {
+                        server.printHistory();
+                    }
                 }
             }
         }
